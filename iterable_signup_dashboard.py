@@ -97,7 +97,7 @@ EMPLOYER_NAME    = "American Automobile Association"
 ENROLLMENT_VALUE = "enrolled"
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
-API_KEY = "90f3cfed80ff406498a95991e99472f4"
+API_KEY = st.secrets["API_KEY"]
 
 with st.sidebar:
     st.markdown("## ⚙️ Configuration")
@@ -243,10 +243,15 @@ date_range_days = max((end_date - start_date).days, 1)
 velocity_per_day = total_enrolled / date_range_days
 enrollment_velocity = f"{velocity_per_day:.1f}"
 
+utilisation = (
+    f"{(total_enrolled / total_aaa_members * 100):.1f}%"
+    if total_aaa_members > 0 else "N/A"
+)
+
 # ── Key Metrics ────────────────────────────────────────────────────────────────
 st.markdown("<div class='kpi-section-title'>Key Metrics</div>", unsafe_allow_html=True)
 
-k1, k2, k3, k4, k5 = st.columns(5)
+k1, k2, k3, k4, k5, k6 = st.columns(6)
 
 with k1:
     st.markdown(
@@ -285,6 +290,14 @@ with k5:
         f"<div class='kpi-block'>"
         f"<div class='kpi-label'>AAA Velocity</div>"
         f"<div class='kpi-value'>{enrollment_velocity} <span style='font-size:24px;font-weight:300;color:#5a6278'>/ day</span></div>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+with k6:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>Utilisation</div>"
+        f"<div class='kpi-value'>{utilisation}</div>"
         f"</div>",
         unsafe_allow_html=True,
     )
