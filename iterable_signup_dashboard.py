@@ -251,6 +251,12 @@ utilisation = (
 # ── Key Metrics ────────────────────────────────────────────────────────────────
 st.markdown("<div class='kpi-section-title'>Key Metrics</div>", unsafe_allow_html=True)
 
+st.markdown(
+    "<div style='font-size:13px;font-weight:600;color:#5a6278;margin-bottom:16px;'>"
+    "All Time — Nov 2025 to Today</div>",
+    unsafe_allow_html=True,
+)
+
 k1, k2, k3, k4, k5, k6 = st.columns(6)
 
 with k1:
@@ -304,7 +310,79 @@ with k6:
 
 st.markdown("<hr class='kpi-divider'>", unsafe_allow_html=True)
 
-# ── Enrollments over time ──────────────────────────────────────────────────────
+# ── Current month KPIs ─────────────────────────────────────────────────────────
+today = datetime.today()
+month_start = pd.Timestamp(today.year, today.month, 1, tz="UTC")
+month_end   = pd.Timestamp(today, tz="UTC")
+
+date_col_cm = None
+for col in ["itblInternal.documentCreatedAt", "profileUpdatedAt", "signupDate"]:
+    if col in df.columns and df[col].notna().any():
+        date_col_cm = col
+        break
+
+if date_col_cm:
+    df_cm = df[
+        (pd.to_datetime(df[date_col_cm], errors="coerce", utc=True) >= month_start) &
+        (pd.to_datetime(df[date_col_cm], errors="coerce", utc=True) <= month_end)
+    ].copy()
+else:
+    df_cm = pd.DataFrame()
+
+cm_enrolled   = len(df_cm)
+cm_employees  = int((df_cm["employeeOrDependent"].str.strip().str.lower() == "employee").sum()) if "employeeOrDependent" in df_cm.columns and not df_cm.empty else 0
+cm_dependents = int((df_cm["employeeOrDependent"].str.strip().str.lower() == "dependent").sum()) if "employeeOrDependent" in df_cm.columns and not df_cm.empty else 0
+cm_days       = max(today.day, 1)
+cm_velocity   = f"{cm_enrolled / cm_days:.1f}"
+cm_util       = f"{(cm_enrolled / total_aaa_members * 100):.1f}%" if total_aaa_members > 0 else "N/A"
+month_label   = today.strftime("%B %Y")
+
+st.markdown(
+    f"<div style='font-size:13px;font-weight:600;color:#5a6278;margin-bottom:16px;'>"
+    f"Current Month — {month_label}</div>",
+    unsafe_allow_html=True,
+)
+
+m1, m2, m3, m4, m5, m6 = st.columns(6)
+
+with m1:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>Total AAA Members</div>"
+        f"<div class='kpi-value'>{total_aaa_members:,}</div>"
+        f"</div>", unsafe_allow_html=True)
+with m2:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>Enrolled AAA Members</div>"
+        f"<div class='kpi-value'>{cm_enrolled:,}</div>"
+        f"</div>", unsafe_allow_html=True)
+with m3:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>Employees Enrolled</div>"
+        f"<div class='kpi-value'>{cm_employees:,}</div>"
+        f"</div>", unsafe_allow_html=True)
+with m4:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>Dependents Enrolled</div>"
+        f"<div class='kpi-value'>{cm_dependents:,}</div>"
+        f"</div>", unsafe_allow_html=True)
+with m5:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>AAA Velocity</div>"
+        f"<div class='kpi-value'>{cm_velocity} <span style='font-size:24px;font-weight:300;color:#5a6278'>/ day</span></div>"
+        f"</div>", unsafe_allow_html=True)
+with m6:
+    st.markdown(
+        f"<div class='kpi-block'>"
+        f"<div class='kpi-label'>Utilisation</div>"
+        f"<div class='kpi-value'>{cm_util}</div>"
+        f"</div>", unsafe_allow_html=True)
+
+st.markdown("<hr class='kpi-divider'>", unsafe_allow_html=True)
 st.markdown("<div class='section-title'>Enrollments Over Time</div>", unsafe_allow_html=True)
 
 # Use documentCreatedAt as the date field for monthly grouping
