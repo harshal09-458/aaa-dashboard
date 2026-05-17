@@ -257,7 +257,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-k1, k2, k3, k4, k5, k6 = st.columns(6)
+k1, k2, k3, k4, k5 = st.columns(5)
 
 with k1:
     st.markdown(
@@ -292,14 +292,6 @@ with k4:
         unsafe_allow_html=True,
     )
 with k5:
-    st.markdown(
-        f"<div class='kpi-block'>"
-        f"<div class='kpi-label'>AAA Velocity</div>"
-        f"<div class='kpi-value'>{enrollment_velocity} <span style='font-size:24px;font-weight:300;color:#5a6278'>/ day</span></div>"
-        f"</div>",
-        unsafe_allow_html=True,
-    )
-with k6:
     st.markdown(
         f"<div class='kpi-block'>"
         f"<div class='kpi-label'>Utilisation</div>"
@@ -343,7 +335,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-m1, m2, m3, m4, m5, m6 = st.columns(6)
+m1, m2, m3, m4, m5 = st.columns(5)
 
 with m1:
     st.markdown(
@@ -370,12 +362,6 @@ with m4:
         f"<div class='kpi-value'>{cm_dependents:,}</div>"
         f"</div>", unsafe_allow_html=True)
 with m5:
-    st.markdown(
-        f"<div class='kpi-block'>"
-        f"<div class='kpi-label'>AAA Velocity</div>"
-        f"<div class='kpi-value'>{cm_velocity} <span style='font-size:24px;font-weight:300;color:#5a6278'>/ day</span></div>"
-        f"</div>", unsafe_allow_html=True)
-with m6:
     st.markdown(
         f"<div class='kpi-block'>"
         f"<div class='kpi-label'>Utilisation</div>"
@@ -435,28 +421,16 @@ else:
 # ── Employee vs Dependent breakdown ───────────────────────────────────────────
 if "employeeOrDependent" in df.columns and df["employeeOrDependent"].notna().any():
     st.markdown("<div class='section-title'>Employee vs Dependent Breakdown</div>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
 
-    with c1:
-        eod = df["employeeOrDependent"].str.strip().str.title().value_counts().reset_index()
-        eod.columns = ["type", "count"]
+    eod = df["employeeOrDependent"].str.strip().str.title().value_counts().reset_index()
+    eod.columns = ["type", "count"]
+    col_pie, col_bar = st.columns(2)
+    with col_pie:
         fig = px.pie(eod, names="type", values="count",
                      color_discrete_sequence=[ACCENT, ACCENT2], hole=0.55)
         fig.update_traces(textfont_size=13)
         fig.update_layout(**plotly_layout("Enrollment Split", height=320))
         st.plotly_chart(fig, use_container_width=True)
-
-    with c2:
-        if "signupDate" in df.columns and df["signupDate"].notna().any():
-            df_eod = df.dropna(subset=["signupDate", "employeeOrDependent"]).copy()
-            df_eod["week"] = df_eod["signupDate"].dt.to_period("W").dt.start_time
-            df_eod["type"] = df_eod["employeeOrDependent"].str.strip().str.title()
-            eod_weekly = df_eod.groupby(["week", "type"]).size().reset_index(name="count")
-            fig3 = px.line(eod_weekly, x="week", y="count", color="type",
-                           color_discrete_sequence=[ACCENT, ACCENT2])
-            fig3.update_traces(line_width=2)
-            fig3.update_layout(**plotly_layout("Employee vs Dependent Over Time", height=320))
-            st.plotly_chart(fig3, use_container_width=True)
 
 # ── Gender breakdown ───────────────────────────────────────────────────────────
 if "gender" in df.columns and df["gender"].notna().any():
