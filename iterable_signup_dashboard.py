@@ -110,8 +110,6 @@ with st.sidebar:
         f"<b>Date Range:</b> Nov 1 2025 – Today</small>",
         unsafe_allow_html=True,
     )
-    st.markdown("")
-    fetch_btn = st.button("🚀 Load Data", use_container_width=True)
 
 # Fixed date range
 start_date = datetime(2025, 11, 1).date()
@@ -195,10 +193,6 @@ st.markdown(
     "American Automobile Association · Enrolled Members · Iterable</p>",
     unsafe_allow_html=True,
 )
-
-if not fetch_btn:
-    st.info("Select a date range and click **Load Data**.")
-    st.stop()
 
 # ── Fetch & filter ─────────────────────────────────────────────────────────────
 with st.spinner("Fetching data from Iterable…"):
