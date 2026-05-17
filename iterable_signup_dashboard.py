@@ -97,27 +97,25 @@ EMPLOYER_NAME    = "American Automobile Association"
 ENROLLMENT_VALUE = "enrolled"
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
-API_KEY = "90f3cfed80ff406498a95991e99472f4"
+API_KEY = "90f3cfed80ff406498a95991e99472f5"
 
 with st.sidebar:
     st.markdown("## ⚙️ Configuration")
     api_key = API_KEY
     st.markdown("---")
-    st.markdown("### 📅 Date Range")
-    col1, col2 = st.columns(2)
-    with col1:
-        start_date = st.date_input("From", value=datetime.today() - timedelta(days=90))
-    with col2:
-        end_date = st.date_input("To", value=datetime.today())
-    st.markdown("---")
     st.markdown(
         f"<small style='color:#8a8fa8'>Filtered to:<br>"
         f"<b>Employer:</b> {EMPLOYER_NAME}<br>"
-        f"<b>Status:</b> {ENROLLMENT_VALUE.title()}</small>",
+        f"<b>Status:</b> {ENROLLMENT_VALUE.title()}<br>"
+        f"<b>Date Range:</b> Nov 1 2025 – Today</small>",
         unsafe_allow_html=True,
     )
     st.markdown("")
     fetch_btn = st.button("🚀 Load Data", use_container_width=True)
+
+# Fixed date range
+start_date = datetime(2025, 11, 1).date()
+end_date   = datetime.today().date()
 
 
 # ── Data fetching ──────────────────────────────────────────────────────────────
