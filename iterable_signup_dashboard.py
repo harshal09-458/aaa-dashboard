@@ -97,7 +97,7 @@ EMPLOYER_NAME    = "American Automobile Association"
 ENROLLMENT_VALUE = "enrolled"
 
 # ── Sidebar ────────────────────────────────────────────────────────────────────
-API_KEY = "90f3cfed80ff406498a95991e99472f5"
+API_KEY = "90f3cfed80ff406498a95991e99472f4"
 
 with st.sidebar:
     st.markdown("## ⚙️ Configuration")
